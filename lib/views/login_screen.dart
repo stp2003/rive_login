@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:rive/rive.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -8,6 +10,37 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  //??
+  var animationLink = 'assets/login-teddy.riv';
+  late SMITrigger failTrigger, successTrigger;
+  late SMIBool lookBool, closedEyesBool;
+  Artboard? artBoard;
+  late StateMachineController? stateMachineController;
+
+  //??
+  @override
+  void initState() {
+    super.initState();
+    initArtBoard();
+  }
+
+  //??
+  initArtBoard() {
+    rootBundle.load(animationLink).then((value) {
+      final file = RiveFile.import(value);
+      final art = file.mainArtboard;
+      stateMachineController =
+          StateMachineController.fromArtboard(art, "Login Machine")!;
+
+      if (stateMachineController != null) {
+        art.addController(stateMachineController!);
+      }
+      setState(() {
+        artBoard = art;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,6 +49,13 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            //??
+            if (artBoard != null)
+              SizedBox(
+                width: 400.0,
+                height: 350.0,
+                child: Rive(artboard: artBoard!),
+              ),
             Container(
               alignment: Alignment.center,
               width: 400.0,
